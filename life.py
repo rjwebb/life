@@ -73,20 +73,25 @@ class LifeGame(object):
 
         # only have to update the live cells and their neighbours
         to_update = set()
-        for i in range(self.width):
-            for j in range(self.height):
-                if self.grid[i,j] == 1:
-                    to_update.add( (i,j) )
-                    for nbr in get_neighbours(i, j, self.width, self.height):
-                        to_update.add(nbr)
-                        # can also calculate the number of neighbours in this step
-                        neighbours_grid[nbr[0],nbr[1]] += 1
+        for x, y in np.ndindex(self.grid.shape):
+            if self.grid[x, y] == 1:
+                # reconsider all live cells
+                to_update.add( (x, y) )
+                for n_x, n_y in get_neighbours(x, y, self.width, self.height):
+                    # reconsider all neighbours of live cells
+                    to_update.add( (n_x, n_y) )
 
-        for i,j in to_update:
-            neighbours = neighbours_grid[i,j]
-            if neighbours == 3 or (neighbours == 2 and (self.grid[i,j] == 1 or probably(p))):
-                new_grid[i,j] = 1
+                    # can also calculate the number of neighbours in this step
+                    neighbours_grid[n_x, n_y] += 1
 
+        # actually update the cells
+        for x, y in to_update:
+            neighbours = neighbours_grid[x, y]
+            # apply cell update rule
+            if neighbours == 3 or (neighbours == 2 and (self.grid[x, y] == 1 or probably(p))):
+                new_grid[x, y] = 1
+
+        # old_grid is used in the draw cycle
         self.old_grid = self.grid
         self.grid = new_grid
 
