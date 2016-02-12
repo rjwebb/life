@@ -64,7 +64,10 @@ def run(probability=0):
                 if event.key == pygame.K_ESCAPE:
                     pygame.event.post(pygame.event.Event(pygame.QUIT))
                 elif event.key == pygame.K_SPACE:
+                    # toggle paused-ness
                     paused = not paused
+
+                    # update the title
                     if paused:
                         pygame.display.set_caption(PAUSED_CAPTION)
                     else:
@@ -79,6 +82,8 @@ def run(probability=0):
 
                 # toggle the state of the clicked cell
                 lg.toggle_cell(cell_x, cell_y)
+
+                # clicking pauses the simulation
                 paused = True
 
 
@@ -131,5 +136,4 @@ if __name__=="__main__":
                         help='probability that a cell with two neighbours will spontaneously appear',
                         type=float)
     args = parser.parse_args()
-    print args.probability, type(args.probability)
     run(probability=args.probability)
