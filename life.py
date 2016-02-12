@@ -14,7 +14,7 @@ def probably(p):
     if p != None:
         return random.random() < p
     else:
-        return True
+        return False
 
 def get_neighbours(x, y, width, height):
     cells = []
@@ -58,14 +58,17 @@ class LifeGame(object):
         self.add_to_grid(thing, centre_x, centre_y)
 
     def toggle_cell(self, x, y):
-        if self.grid[cell_x, cell_y] == 1:
-            self.grid[cell_x, cell_y] = 0
+        if self.grid[x, y] == 1:
+            v = 0
         else:
-            self.grid[cell_x, cell_y] = 1
+            v = 1
+        self.old_grid[x, y] = self.grid[x, y]
+        self.grid[x, y] = v
 
     def update(self, p=None):
         new_grid = np.zeros((self.width, self.height), dtype=np.uint8)
 
+        # matrix containing the number of neighbours of each cell
         neighbours_grid = np.zeros((self.width, self.height), dtype=np.uint8)
 
         # only have to update the live cells and their neighbours
@@ -76,6 +79,7 @@ class LifeGame(object):
                     to_update.add( (i,j) )
                     for nbr in get_neighbours(i, j, self.width, self.height):
                         to_update.add(nbr)
+                        # can also calculate the number of neighbours in this step
                         neighbours_grid[nbr[0],nbr[1]] += 1
 
         for i,j in to_update:

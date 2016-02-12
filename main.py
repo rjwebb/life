@@ -79,6 +79,7 @@ def run(probability=0):
 
                 # toggle the state of the clicked cell
                 lg.toggle_cell(cell_x, cell_y)
+                paused = True
 
 
         # game logic stage
