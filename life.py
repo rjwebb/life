@@ -57,39 +57,16 @@ class LifeGame(object):
         centre_y = self.height / 2
         self.add_to_grid(thing, centre_x, centre_y)
 
-    def count_neighbours(self, x, y):
-        s = 0
-
-        if x > 0:
-            if y > 0:
-                s += self.grid[x-1, y-1]
-            if y < self.height - 1:
-                s += self.grid[x-1, y+1]
-            s += self.grid[x-1, y]
-
-        if x < self.width - 1:
-            if y > 0:
-                s += self.grid[x+1, y-1]
-            if y < self.height - 1:
-                s += self.grid[x+1, y+1]
-            s += self.grid[x+1, y]
-
-        if y > 0:
-            s += self.grid[x, y-1]
-        if y < self.height - 1:
-            s += self.grid[x, y+1]
-
-        return s
-
     def toggle_cell(self, x, y):
         if self.grid[cell_x, cell_y] == 1:
             self.grid[cell_x, cell_y] = 0
         else:
             self.grid[cell_x, cell_y] = 1
 
-
     def update(self, p=None):
         new_grid = np.zeros((self.width, self.height), dtype=np.uint8)
+
+        neighbours_grid = np.zeros((self.width, self.height), dtype=np.uint8)
 
         # only have to update the live cells and their neighbours
         to_update = set()
@@ -99,9 +76,10 @@ class LifeGame(object):
                     to_update.add( (i,j) )
                     for nbr in get_neighbours(i, j, self.width, self.height):
                         to_update.add(nbr)
+                        neighbours_grid[nbr[0],nbr[1]] += 1
 
         for i,j in to_update:
-            neighbours = self.count_neighbours(i,j)
+            neighbours = neighbours_grid[i,j]
             if neighbours == 3 or (neighbours == 2 and (self.grid[i,j] == 1 or probably(p))):
                 new_grid[i,j] = 1
 
