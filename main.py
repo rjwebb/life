@@ -33,9 +33,10 @@ def run(probability=0):
 
     # initialise the game state
     lg = life.LifeGame(grid_width, grid_height)
+    old_grid = None
 
     # initialise a 3x1 flippy thing
-    lg.add_to_centre_of_grid(life.three_bar)
+    life.add_to_centre_of_grid(lg.grid, life.three_bar)
 
     # dimensions of the rendered cells
     cell_width = size[0] / lg.grid.shape[0]
@@ -81,7 +82,9 @@ def run(probability=0):
                 cell_y = mouse_y / cell_height
 
                 # toggle the state of the clicked cell
-                lg.toggle_cell(cell_x, cell_y)
+                old_grid[cell_x, cell_y] = lg.grid[cell_x, cell_y]
+
+                life.toggle_cell(lg.grid, cell_x, cell_y)
 
                 # clicking pauses the simulation
                 paused = True
@@ -92,7 +95,7 @@ def run(probability=0):
             if not lg.grid.any():
                 # reset board because it's all dead, jim
                 # add that default bit back to it
-                lg.add_to_centre_of_grid(life.three_bar)
+                life.add_to_centre_of_grid(lg.grid, life.three_bar)
             lg.update(p=probability)
             i += 1
 
@@ -105,7 +108,7 @@ def run(probability=0):
         # iterate over the cells
         for x,y in np.ndindex(lg.grid.shape):
             # avoid redrawing cells that haven't changed
-            if lg.old_grid == None or lg.grid[x,y] != lg.old_grid[x,y]:
+            if old_grid == None or lg.grid[x,y] != old_grid[x,y]:
                 # live cells are red, dead cells are white
                 if lg.grid[x,y] == 1:
                     c = RED_COLOR
@@ -125,6 +128,8 @@ def run(probability=0):
         dt = clock.tick(30)
         #if not paused and i % 50 == 0:
         #    print int(1000 / dt)
+
+        old_grid = lg.grid
     
     # close the window and quit
     pygame.quit()

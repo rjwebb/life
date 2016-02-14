@@ -42,27 +42,38 @@ def get_neighbours(x, y, shape):
     return cells
 
 
+def add_to_grid(grid, thing, x, y):
+    """
+    thing is a list of relative coordinates
+    for every point in thing relative to (x,y), set the corresponding bit in grid to 1
+    """
+    for c_x, c_y in thing:
+        grid[x+c_x, y+c_y] = 1
+
+def add_to_centre_of_grid(grid, thing):
+    """
+    thing is a list of relative coordinates
+    do add_to_grid, where (x,y) is the centre of the grid
+    """
+    centre_x = grid.shape[0] / 2
+    centre_y = grid.shape[1] / 2
+    add_to_grid(grid, thing, centre_x, centre_y)
+
+def toggle_cell(grid, x, y):
+    """
+    if grid[x, y] is 1, set grid[x, y] to 0
+    and vice versa
+    """
+    if grid[x, y] == 1:
+        v = 0
+    else:
+        v = 1
+    grid[x, y] = v
+
+
 class LifeGame(object):
     def __init__(self, width, height):
         self.grid = np.zeros((width, height), dtype=np.uint8)
-        self.old_grid = None
-
-    def add_to_grid(self, thing, x, y):
-        for c_x, c_y in thing:
-            self.grid[x+c_x, y+c_y] = 1
-
-    def add_to_centre_of_grid(self, thing):
-        centre_x = self.grid.shape[0] / 2
-        centre_y = self.grid.shape[1] / 2
-        self.add_to_grid(thing, centre_x, centre_y)
-
-    def toggle_cell(self, x, y):
-        if self.grid[x, y] == 1:
-            v = 0
-        else:
-            v = 1
-        self.old_grid[x, y] = self.grid[x, y]
-        self.grid[x, y] = v
 
     def update(self, p=None):
         new_grid = np.zeros(self.grid.shape, dtype=np.uint8)
@@ -91,7 +102,6 @@ class LifeGame(object):
                 new_grid[x, y] = 1
 
         # old_grid is used in the draw cycle
-        self.old_grid = self.grid
         self.grid = new_grid
 
 
