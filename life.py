@@ -107,6 +107,7 @@ def update(grid, p=None):
 
 
 if __name__=="__main__":
+    # just a test
     lg = LifeGame(10,10)
     lg.grid[2,5] = 1
 
