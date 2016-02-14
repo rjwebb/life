@@ -71,39 +71,39 @@ def toggle_cell(grid, x, y):
     grid[x, y] = v
 
 
-class LifeGame(object):
-    def __init__(self, width, height):
-        self.grid = np.zeros((width, height), dtype=np.uint8)
+def update(grid, p=None):
+    """
+    takes a matrix of values (1 or 0) representing the Life game state
+    returns the game state, advanced by one step
 
-    def update(self, p=None):
-        new_grid = np.zeros(self.grid.shape, dtype=np.uint8)
+    p is the probability that a dead cell with 2 neighbours spontaneously becomes alive (zombie?)
+    """
+    new_grid = np.zeros(grid.shape, dtype=np.uint8)
 
-        # matrix containing the number of neighbours of each cell
-        neighbours_grid = np.zeros(self.grid.shape, dtype=np.uint8)
+    # matrix containing the number of neighbours of each cell
+    neighbours_grid = np.zeros(grid.shape, dtype=np.uint8)
 
-        # only have to update the live cells and their neighbours
-        to_update = set()
-        for x, y in np.ndindex(self.grid.shape):
-            if self.grid[x, y] == 1:
-                # reconsider all live cells
-                to_update.add( (x, y) )
-                for n_x, n_y in get_neighbours(x, y, self.grid.shape):
-                    # reconsider all neighbours of live cells
-                    to_update.add( (n_x, n_y) )
+    # only have to update the live cells and their neighbours
+    to_update = set()
+    for x, y in np.ndindex(grid.shape):
+        if grid[x, y] == 1:
+            # reconsider all live cells
+            to_update.add( (x, y) )
+            for n_x, n_y in get_neighbours(x, y, grid.shape):
+                # reconsider all neighbours of live cells
+                to_update.add( (n_x, n_y) )
 
-                    # can also calculate the number of neighbours in this step
-                    neighbours_grid[n_x, n_y] += 1
+                # can also calculate the number of neighbours in this step
+                neighbours_grid[n_x, n_y] += 1
 
-        # actually update the cells
-        for x, y in to_update:
-            neighbours = neighbours_grid[x, y]
-            # apply cell update rule
-            if neighbours == 3 or (neighbours == 2 and (self.grid[x, y] == 1 or probably(p))):
-                new_grid[x, y] = 1
+    # actually update the cells
+    for x, y in to_update:
+        neighbours = neighbours_grid[x, y]
+        # apply cell update rule
+        if neighbours == 3 or (neighbours == 2 and (grid[x, y] == 1 or probably(p))):
+            new_grid[x, y] = 1
 
-        # old_grid is used in the draw cycle
-        self.grid = new_grid
-
+    return new_grid
 
 
 if __name__=="__main__":
