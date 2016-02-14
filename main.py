@@ -92,9 +92,8 @@ def run(probability=0):
         # game logic stage
         if not paused:
             if not grid.any():
-                # reset board because it's all dead, jim
-                # add that default bit back to it
-                life.add_to_centre_of_grid(grid, life.three_bar)
+                # just pause the game if everything dies
+                paused = True
 
             # advance the game state
             old_grid = grid
