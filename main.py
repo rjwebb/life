@@ -38,8 +38,8 @@ def run(probability=0):
     lg.add_to_centre_of_grid(life.three_bar)
 
     # dimensions of the rendered cells
-    cell_width = size[0] / lg.width
-    cell_height = size[1] / lg.height
+    cell_width = size[0] / lg.grid.shape[0]
+    cell_height = size[1] / lg.grid.shape[1]
 
 
     # Loop until the game quits
